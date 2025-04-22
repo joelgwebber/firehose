@@ -23,7 +23,7 @@ export const processUpload = functions.storage.object().onFinalize(async (object
   const filePath = object.name;
   const contentType = object.contentType || "";
   const fileId = object.id || object.name || "unknown";
-  
+
   if (!filePath) {
     console.error("File path is undefined");
     return;
@@ -33,9 +33,9 @@ export const processUpload = functions.storage.object().onFinalize(async (object
     // Download the file
     const bucket = storage.bucket(object.bucket);
     const [file] = await bucket.file(filePath).download();
-    
+
     let content = "";
-    
+
     // Process file based on content type
     if (contentType.includes("pdf")) {
       const pdfData = await pdfParse(file);
@@ -72,7 +72,7 @@ export const processUpload = functions.storage.object().onFinalize(async (object
     };
 
     await firestore.collection("documents").doc(fileId).set(document);
-    
+
     console.log(`Successfully processed ${filePath}`);
   } catch (error) {
     console.error("Error processing file:", error);
@@ -92,7 +92,7 @@ export const searchDocuments = functions.https.onCall(async (data, context) => {
     .get();
 
   const results = [];
-  
+
   for (const doc of snapshot.docs) {
     const data = doc.data() as Document;
     // Simple string match for now
@@ -116,16 +116,16 @@ function generateSnippet(content: string, query: string): string {
   const queryLower = query.toLowerCase();
   const contentLower = content.toLowerCase();
   const index = contentLower.indexOf(queryLower);
-  
+
   if (index === -1) return content.substring(0, 150) + "...";
-  
+
   const start = Math.max(0, index - 75);
   const end = Math.min(content.length, index + query.length + 75);
-  
+
   let snippet = content.substring(start, end);
-  
+
   if (start > 0) snippet = "..." + snippet;
   if (end < content.length) snippet = snippet + "...";
-  
+
   return snippet;
 }

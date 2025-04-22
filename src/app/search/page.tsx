@@ -22,20 +22,20 @@ export default function SearchPage() {
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!query.trim()) return;
-    
+
     setSearching(true);
     setError(null);
     setHasSearched(true);
-    
+
     try {
       const functions = getFunctions(app);
       const searchDocuments = httpsCallable(functions, 'searchDocuments');
-      
+
       const response = await searchDocuments({ query: query.trim() });
       const data = response.data as { results: SearchResult[] };
-      
+
       setResults(data.results);
     } catch (err) {
       console.error('Error searching documents:', err);
@@ -70,7 +70,7 @@ export default function SearchPage() {
         <div className="bg-white shadow-xl rounded-lg overflow-hidden">
           <div className="px-4 py-5 sm:p-6">
             <h1 className="text-2xl font-bold text-gray-900 mb-6">Search Documents</h1>
-            
+
             <form onSubmit={handleSearch}>
               <div className="mt-1 flex rounded-md shadow-sm">
                 <div className="relative flex items-stretch flex-grow">
@@ -93,19 +93,19 @@ export default function SearchPage() {
                 </button>
               </div>
             </form>
-            
+
             {error && (
               <div className="mt-4 text-sm text-red-600 bg-red-50 p-3 rounded">
                 {error}
               </div>
             )}
-            
+
             {hasSearched && !error && (
               <div className="mt-6">
                 <h2 className="text-lg font-medium text-gray-900">
                   {results.length} result{results.length !== 1 ? 's' : ''} found
                 </h2>
-                
+
                 {results.length === 0 ? (
                   <div className="mt-4 bg-gray-50 p-4 rounded text-center text-gray-500">
                     No documents matching your search terms were found.
